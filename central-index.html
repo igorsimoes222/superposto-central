@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuperPosto · Painel Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #060810;
+  --bg2:    #0b0f1a;
+  --bg3:    #0f1520;
+  --bg4:    #141c28;
+  --border: #1e2d42;
+  --acc:    #f5a623;
+  --acc2:   #ff5e1a;
+  --text:   #7a9ab5;
+  --dim:    #2a3d52;
+  --white:  #ddeeff;
+  --green:  #00e599;
+  --red:    #ff3d5a;
+  --blue:   #3d9bff;
+  --yellow: #ffd060;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'IBM Plex Mono',monospace; min-height:100vh; }
+
+body::before {
+  content:''; position:fixed; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);
+  pointer-events:none; z-index:9999;
+}
+
+/* LOGIN */
+#login-screen {
+  position:fixed; inset:0; background:var(--bg);
+  display:flex; align-items:center; justify-content:center; z-index:100;
+}
+.login-box {
+  background:var(--bg2); border:1px solid var(--border); border-radius:16px;
+  padding:40px 48px; width:100%; max-width:400px; text-align:center;
+}
+.login-badge {
+  width:64px; height:64px; margin:0 auto 20px;
+  background:linear-gradient(135deg,var(--acc),var(--acc2));
+  border-radius:16px; display:flex; align-items:center; justify-content:center;
+  font-family:'Oswald',sans-serif; font-size:24px; font-weight:700; color:#000;
+  box-shadow:0 0 30px rgba(245,166,35,.3);
+}
+.login-title { font-family:'Oswald',sans-serif; font-size:22px; color:var(--white); letter-spacing:2px; text-transform:uppercase; margin-bottom:4px; }
+.login-sub { font-size:9px; color:var(--acc); letter-spacing:3px; text-transform:uppercase; margin-bottom:32px; }
+.login-input {
+  width:100%; background:var(--bg4); border:1px solid var(--border); border-radius:8px;
+  color:var(--white); font-family:'IBM Plex Mono',monospace; font-size:14px;
+  padding:12px 16px; outline:none; margin-bottom:12px;
+  transition:border-color .2s, box-shadow .2s;
+}
+.login-input:focus { border-color:var(--acc); box-shadow:0 0 0 3px rgba(245,166,35,.1); }
+.login-btn {
+  width:100%; padding:13px; border:none; border-radius:8px;
+  background:linear-gradient(135deg,var(--acc),var(--acc2));
+  font-family:'Oswald',sans-serif; font-size:15px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase; color:#000; cursor:pointer;
+  transition:all .2s;
+}
+.login-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(245,166,35,.3); }
+.login-err { color:var(--red); font-size:11px; margin-top:10px; }
+
+/* HEADER */
+header {
+  position:sticky; top:0; z-index:100;
+  height:64px; background:rgba(6,8,16,.97); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; padding:0 32px;
+}
+.logo { display:flex; align-items:center; gap:14px; }
+.logo-badge {
+  width:40px; height:40px;
+  background:linear-gradient(135deg,var(--acc),var(--acc2));
+  border-radius:10px; display:flex; align-items:center; justify-content:center;
+  font-family:'Oswald',sans-serif; font-size:16px; font-weight:700; color:#000;
+}
+.logo-text h1 { font-family:'Oswald',sans-serif; font-size:20px; color:var(--white); letter-spacing:2px; text-transform:uppercase; }
+.logo-text p  { font-size:9px; color:var(--acc); letter-spacing:4px; text-transform:uppercase; }
+.clock { font-family:'Oswald',sans-serif; font-size:26px; font-weight:300; color:var(--acc); letter-spacing:3px; }
+
+/* MAIN */
+.main { padding:28px 32px; max-width:1400px; margin:0 auto; }
+
+/* KPIs */
+.kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+.kpi {
+  background:var(--bg2); border:1px solid var(--border); border-radius:12px;
+  padding:20px 24px; position:relative; overflow:hidden;
+}
+.kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.kpi.k1::before { background:linear-gradient(90deg,var(--green),transparent); }
+.kpi.k2::before { background:linear-gradient(90deg,var(--red),transparent); }
+.kpi.k3::before { background:linear-gradient(90deg,var(--blue),transparent); }
+.kpi-lbl { font-size:9px; color:var(--dim); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.kpi-num { font-family:'Oswald',sans-serif; font-size:48px; font-weight:600; line-height:1; }
+.kpi-num.grn { color:var(--green); }
+.kpi-num.red { color:var(--red); }
+.kpi-num.blu { color:var(--blue); }
+
+/* TABELA */
+.table-wrap {
+  background:var(--bg2); border:1px solid var(--border); border-radius:14px; overflow:hidden;
+}
+.table-head {
+  padding:16px 24px; background:rgba(0,0,0,.2);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.table-title { font-size:10px; color:var(--acc); letter-spacing:3px; text-transform:uppercase; }
+.btn-refresh {
+  background:transparent; border:1px solid var(--border); border-radius:6px;
+  color:var(--text); font-family:'IBM Plex Mono',monospace; font-size:10px;
+  padding:6px 14px; cursor:pointer; transition:all .15s; letter-spacing:1px;
+}
+.btn-refresh:hover { border-color:var(--acc); color:var(--acc); }
+
+table { width:100%; border-collapse:collapse; }
+th {
+  padding:10px 20px; text-align:left;
+  font-size:8px; color:var(--dim); text-transform:uppercase; letter-spacing:2px;
+  border-bottom:1px solid var(--border); background:rgba(0,0,0,.1);
+}
+td { padding:14px 20px; border-bottom:1px solid rgba(30,45,66,.5); font-size:12px; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(245,166,35,.03); }
+
+.status-dot {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase;
+}
+.dot { width:7px; height:7px; border-radius:50%; }
+@keyframes lp { 0%,100%{opacity:1} 50%{opacity:.3} }
+.dot.on  { background:var(--green); box-shadow:0 0 8px var(--green); animation:lp 2s infinite; }
+.dot.off { background:var(--dim); }
+.status-dot.on  { color:var(--green); }
+.status-dot.off { color:var(--dim); }
+
+.hostname { font-family:'Oswald',sans-serif; font-size:14px; color:var(--white); }
+.ip-text  { font-size:10px; color:var(--dim); margin-top:2px; }
+.version  { font-size:10px; color:var(--blue); }
+.tempo    { font-size:10px; color:var(--text); }
+
+#app { display:none; }
+#login-screen.hidden { display:none; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-badge">SP</div>
+    <div class="login-title">SuperPosto</div>
+    <div class="login-sub">Painel Administrativo</div>
+    <input class="login-input" id="token-input" type="password" placeholder="Token de acesso" onkeydown="if(event.key==='Enter')entrar()">
+    <button class="login-btn" onclick="entrar()">ENTRAR</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="logo">
+      <div class="logo-badge">SP</div>
+      <div class="logo-text">
+        <h1>SuperPosto</h1>
+        <p>Painel Administrativo</p>
+      </div>
+    </div>
+    <div class="clock" id="clock">--:--:--</div>
+  </header>
+
+  <div class="main">
+    <div class="kpis">
+      <div class="kpi k1">
+        <div class="kpi-lbl">Instalacoes Online</div>
+        <div class="kpi-num grn" id="k-online">0</div>
+      </div>
+      <div class="kpi k2">
+        <div class="kpi-lbl">Instalacoes Offline</div>
+        <div class="kpi-num red" id="k-offline">0</div>
+      </div>
+      <div class="kpi k3">
+        <div class="kpi-lbl">Total Instalado</div>
+        <div class="kpi-num blu" id="k-total">0</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-head">
+        <span class="table-title">Instalacoes Registradas</span>
+        <button class="btn-refresh" onclick="carregar()">↻ Atualizar</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Maquina</th>
+            <th>IP</th>
+            <th>Versao</th>
+            <th>Postos</th>
+            <th>Ultimo Ping</th>
+            <th>Primeiro Acesso</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-body">
+          <tr><td colspan="7" style="text-align:center;color:var(--dim);padding:40px">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+let TOKEN = '';
+
+setInterval(() => {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('pt-BR', { hour12:false });
+}, 1000);
+
+function entrar() {
+  TOKEN = document.getElementById('token-input').value.trim();
+  if (!TOKEN) return;
+  carregar(true);
+}
+
+function fmtData(iso) {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR');
+}
+
+function tempoAtras(iso) {
+  if (!iso) return '-';
+  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (diff < 60)  return `${diff}s atras`;
+  if (diff < 3600) return `${Math.floor(diff/60)}min atras`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}h atras`;
+  return `${Math.floor(diff/86400)}d atras`;
+}
+
+async function carregar(login = false) {
+  try {
+    const r = await fetch('/api/status', {
+      headers: { 'x-token': TOKEN }
+    });
+
+    if (r.status === 401) {
+      if (login) document.getElementById('login-err').textContent = 'Token invalido!';
+      return;
+    }
+
+    const json = await r.json();
+
+    if (login) {
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('app').style.display = 'block';
+    }
+
+    document.getElementById('k-online').textContent  = json.online;
+    document.getElementById('k-offline').textContent = json.total - json.online;
+    document.getElementById('k-total').textContent   = json.total;
+
+    const tbody = document.getElementById('tabela-body');
+
+    if (!json.clientes || json.clientes.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:40px">Nenhuma instalacao registrada ainda</td></tr>`;
+      return;
+    }
+
+    // Ordena: online primeiro
+    const sorted = json.clientes.sort((a,b) => (b.online ? 1 : 0) - (a.online ? 1 : 0));
+
+    tbody.innerHTML = sorted.map(c => `
+      <tr>
+        <td>
+          <span class="status-dot ${c.online ? 'on' : 'off'}">
+            <span class="dot ${c.online ? 'on' : 'off'}"></span>
+            ${c.online ? 'ONLINE' : 'OFFLINE'}
+          </span>
+        </td>
+        <td>
+          <div class="hostname">${c.hostname}</div>
+          <div class="ip-text">ID: ${c.id}</div>
+        </td>
+        <td><span class="tempo">${c.ip}</span></td>
+        <td><span class="version">v${c.versao}</span></td>
+        <td style="color:var(--white);font-family:'Oswald',sans-serif;font-size:18px">${c.postos}</td>
+        <td><span class="tempo">${tempoAtras(c.ultimoPing)}</span></td>
+        <td><span class="tempo">${fmtData(c.primeiroAcesso)}</span></td>
+      </tr>
+    `).join('');
+
+  } catch(e) {
+    if (login) document.getElementById('login-err').textContent = 'Erro de conexao';
+  }
+}
+
+// Auto-refresh a cada 30s quando logado
+setInterval(() => {
+  if (TOKEN) carregar();
+}, 30000);
+</script>
+</body>
+</html>
